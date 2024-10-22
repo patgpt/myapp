@@ -1,34 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/providers/navigation_provider.dart';
+import 'package:myapp/providers/theme_provider.dart';
 import 'package:myapp/widgets/drawer.dart';
 
-class LandingPage extends StatelessWidget {
+class LandingPage extends ConsumerWidget {
   const LandingPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-   appBar: AppBar(
-        title: const Text('Patrick Kelly'),
-      ),
-      drawer: const PDrawer(),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.watch(themeProvider);
+    final currentIndex = ref.watch(navigationProvider);
 
-      bottomNavigationBar: BottomNavigationBar(elevation: 3, items: const [
-        BottomNavigationBarItem(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Patrick Kelly'),
+        actions: [
+          Switch(
+            value: isDarkMode,
+            onChanged: (value) {
+              ref.read(themeProvider.notifier).state = value;
+            },
+          ),
+        ],
+      ),
+      drawer: PDrawer(
+        onItemSelected: (index) {
+          ref.read(navigationProvider.notifier).state = index;
+          Navigator.pop(context); // Close the drawer
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        onTap: (index) {
+          ref.read(navigationProvider.notifier).state = index;
+        },
+        elevation: 3,
+        items: const [
+          BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Colors.deepPurpleAccent),
-        BottomNavigationBarItem(
+            backgroundColor: Colors.deepPurpleAccent,
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.work),
             label: 'Work',
-            backgroundColor: Colors.blueAccent),
-        BottomNavigationBarItem(
+            backgroundColor: Colors.blueAccent,
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.school),
             label: 'Education',
-            backgroundColor: Colors.tealAccent),
-      ]),
+            backgroundColor: Colors.tealAccent,
+          ),
+        ],
+      ),
       body: const Stack(
         children: [
-          FancyShaderBackground(),
           Align(
             alignment: Alignment.center,
             child: Column(
@@ -66,81 +93,5 @@ class LandingPage extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class ShaderEffectBackground extends StatelessWidget {
-  const ShaderEffectBackground({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ShaderMask(
-      shaderCallback: (Rect bounds) {
-        return const LinearGradient(
-          colors: [
-            Colors.deepPurpleAccent,
-            Colors.blueAccent,
-            Colors.tealAccent,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ).createShader(bounds);
-      },
-      blendMode: BlendMode.srcATop,
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            colors: [
-              Colors.black,
-              Colors.transparent,
-            ],
-            radius: 1.5,
-            center: Alignment.center,
-          ),
-        ),
-        width: double.infinity,
-        height: double.infinity,
-      ),
-    );
-  }
-}
-
-class FancyShaderBackground extends StatefulWidget {
-  const FancyShaderBackground({super.key});
-
-  @override
-  State<FancyShaderBackground> createState() => _FancyShaderBackgroundState();
-}
-
-class _FancyShaderBackgroundState extends State<FancyShaderBackground> {
-  @override
-  Widget build(BuildContext context) {
-    return ShaderMask(
-      shaderCallback: (bounds) => _createShader(bounds),
-      blendMode: BlendMode.srcATop,
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            colors: [Colors.black, Colors.transparent],
-            radius: 1.5,
-            center: Alignment.center,
-          ),
-        ),
-        width: double.infinity,
-        height: double.infinity,
-      ),
-    );
-  }
-
-  Shader _createShader(Rect bounds) {
-    return const LinearGradient(
-      colors: [
-        Colors.deepPurpleAccent,
-        Colors.blueAccent,
-        Colors.tealAccent,
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ).createShader(bounds);
   }
 }

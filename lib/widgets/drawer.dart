@@ -1,53 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/providers/navigation_provider.dart';
 
-class PDrawer extends StatelessWidget {
-  const PDrawer({super.key});
+class PDrawer extends ConsumerWidget {
+  final Function(int) onItemSelected;
+
+  const PDrawer({super.key, required this.onItemSelected});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(navigationProvider);
+
     return Drawer(
-      child: Column(children: [
-        DrawerHeader(
-          child: Image.asset('assets/pfp.webp'),
-        ),
-        SingleChildScrollView(
-          child: Column(
-            children: [
-              // Home, Projects, Education, Art
-              ListTile(
-                leading: const Icon(Icons.home),
-                title: const Text('Home'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+            child: Text(
+              'Navigation',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
               ),
-              ListTile(
-                leading: const Icon(Icons.work),
-                title: const Text('Projects'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.school),
-                title: const Text('Education'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.art_track),
-                title: const Text('Art'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+            ),
           ),
-        )
-      ]),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
+            selected: currentIndex == 0,
+            onTap: () => onItemSelected(0),
+          ),
+          ListTile(
+            leading: const Icon(Icons.work),
+            title: const Text('Work'),
+            selected: currentIndex == 1,
+            onTap: () => onItemSelected(1),
+          ),
+          ListTile(
+            leading: const Icon(Icons.school),
+            title: const Text('Education'),
+            selected: currentIndex == 2,
+            onTap: () => onItemSelected(2),
+          ),
+        ],
+      ),
     );
   }
 }
-
-
