@@ -28,6 +28,7 @@ class LandingPage extends ConsumerWidget {
         onItemSelected: (index) {
           ref.read(navigationProvider.notifier).state = index;
           Navigator.pop(context); // Close the drawer
+          Navigator.pushNamed(context, '/$index');
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -56,6 +57,7 @@ class LandingPage extends ConsumerWidget {
       ),
       body: const Stack(
         children: [
+          FancyShaderBackground(),
           Align(
             alignment: Alignment.center,
             child: Column(
@@ -93,5 +95,41 @@ class LandingPage extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+//
+
+class FancyShaderBackground extends ConsumerWidget {
+  const FancyShaderBackground({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.watch(themeProvider);
+
+    return ShaderMask(
+      shaderCallback: (bounds) => _createShader(bounds, isDarkMode),
+      blendMode: BlendMode.srcATop,
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            colors: [Colors.black, Colors.transparent],
+            radius: 1.5,
+            center: Alignment.center,
+          ),
+        ),
+        width: double.infinity,
+        height: double.infinity,
+      ),
+    );
+  }
+
+  Shader _createShader(Rect bounds, bool isDarkMode) {
+    return LinearGradient(
+      colors: isDarkMode
+          ? [Colors.deepPurpleAccent, Colors.blueAccent, Colors.tealAccent]
+          : [Colors.orangeAccent, Colors.pinkAccent, Colors.yellowAccent],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ).createShader(bounds);
   }
 }
