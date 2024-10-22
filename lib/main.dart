@@ -74,7 +74,10 @@ class _LandingPageState extends State<LandingPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Patrick Kelly'),
+        title: const Text(
+          'Patrick Kelly',
+          textAlign: TextAlign.center,
+        ),
         actions: [
           Switch(
             value: widget.isDarkMode,
@@ -305,10 +308,3 @@ class PDrawer extends StatelessWidget {
     );
   }
 }
-
-class WorkPage extends StatelessWidget {
-  const WorkPage({super.key});
-
-  
-
-  
